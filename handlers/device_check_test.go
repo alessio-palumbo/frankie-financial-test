@@ -10,7 +10,13 @@ import (
 )
 
 const (
-	ResponseSuccess = `{"puppy":true}`
+	successResponse    = `{"puppy":true}`
+	badRequestResponse = `{"code":400,"message":"payload is empty or malformed"}`
+)
+
+var (
+	sampleRequest = `[{"checkType":"dasfs","activityType":"","checkSessionKey":"",
+		"activityData":[{"kvpKey":"","kvpValue":"","kvpType":""}]}]`
 )
 
 func TestDeviceCheck(t *testing.T) {
@@ -23,9 +29,15 @@ func TestDeviceCheck(t *testing.T) {
 	}{
 		{
 			name:       "Success",
-			payload:    "",
+			payload:    sampleRequest,
 			statusCode: 200,
-			response:   ResponseSuccess,
+			response:   successResponse,
+		},
+		{
+			name:       "Empty request",
+			payload:    "",
+			statusCode: 400,
+			response:   badRequestResponse,
 		},
 	}
 
