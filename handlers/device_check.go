@@ -12,7 +12,7 @@ import (
 
 // DeviceCheck validates the payload and returns a puppy if the request is correct.
 // For invalid payloads it returns an error with a description of the issue found
-func DeviceCheck(c *gin.Context) {
+func (h *Handler) DeviceCheck(c *gin.Context) {
 	var body []models.DeviceCheckDetails
 
 	err := c.BindJSON(&body)
@@ -23,7 +23,7 @@ func DeviceCheck(c *gin.Context) {
 
 	var errorsList []string
 	for _, p := range body {
-		err := validatePayload(p)
+		err := h.validatePayload(p)
 		if err != nil {
 			errorsList = append(errorsList, err.Error())
 		}
@@ -39,7 +39,7 @@ func DeviceCheck(c *gin.Context) {
 	})
 }
 
-func validatePayload(payload models.DeviceCheckDetails) error {
+func (h *Handler) validatePayload(payload models.DeviceCheckDetails) error {
 
 	if !isValidCheckType(payload.CheckType) {
 		return errors.New("invalid checkType")
@@ -47,6 +47,10 @@ func validatePayload(payload models.DeviceCheckDetails) error {
 
 	if !isValidActivityType(payload.ActivityType) {
 		return errors.New("invalid activityType")
+	}
+
+	if !isValidCheckSessionKey(payload.CheckSessionKey, h.SessionCache) {
+		return errors.New("invalid checkSessionKey")
 	}
 
 	return nil

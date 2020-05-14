@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"testing"
+
+	"github.com/alessio-palumbo/frankie-financial-test/cache"
 )
 
 func Test_isValidCheckType(t *testing.T) {
@@ -95,6 +97,47 @@ func Test_isValidActivityType(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := isValidActivityType(tt.at); got != tt.want {
 				t.Errorf("isValidActivityType() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_isValidCheckSessionKey(t *testing.T) {
+
+	tests := []struct {
+		name         string
+		sk           string
+		existingKeys []string
+		want         bool
+	}{
+		{
+			name: "Empty cache",
+			sk:   "CHECK_SESSION_KEY_001",
+			want: true,
+		},
+		{
+			name:         "Already in cache",
+			sk:           "CHECK_SESSION_KEY_335",
+			existingKeys: []string{"234", "334", "335"},
+			want:         false,
+		},
+		{
+			name:         "Not in cache",
+			sk:           "CHECK_SESSION_KEY_111",
+			existingKeys: []string{"234", "334", "335", "002", "134"},
+			want:         true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cache := cache.New()
+			for _, key := range tt.existingKeys {
+				cache.Store("CHECK_SESSION_KEY_" + key)
+			}
+
+			if got := isValidCheckSessionKey(tt.sk, cache); got != tt.want {
+				t.Errorf("isValidCheckSessionKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

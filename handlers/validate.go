@@ -3,6 +3,7 @@ package handlers
 import (
 	"strings"
 
+	"github.com/alessio-palumbo/frankie-financial-test/cache"
 	"github.com/alessio-palumbo/frankie-financial-test/models"
 )
 
@@ -23,4 +24,13 @@ func isValidActivityType(at string) bool {
 	}
 
 	return false
+}
+
+func isValidCheckSessionKey(sk string, cache *cache.SessionCache) bool {
+	if cache.Has(sk) {
+		return false
+	}
+
+	cache.Store(sk)
+	return true
 }
