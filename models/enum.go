@@ -25,22 +25,30 @@ var CheckTypes = map[string]checkType{
 // Vendor specific ActivityType can also be supplied when prepended with an underscore(_).
 // In this case there is no error checking, and thus if the supplied value is incorrect
 // the call will fail.
-type ActivityType string
+type ActivityType int
 
 const (
 	// ActivitySignup is used when an entity is signing up to the service.
-	ActivitySignup ActivityType = "SIGNUP"
+	ActivitySignup ActivityType = iota
 
 	// ActivityLogin is used to log in to the service by an already registered entity.
-	ActivityLogin ActivityType = "LOGIN"
+	ActivityLogin
 
 	// ActivityPayment is used to check that all is well for a payment.
-	ActivityPayment ActivityType = "PAYMENT"
+	ActivityPayment
 
 	// ActivityConfirmation is used to double check that a user is still legitimate when
 	// they confirm an action.
-	ActivityConfirmation ActivityType = "CONFIRMATION"
+	ActivityConfirmation
 )
+
+// ActivityTypes lists the valid activityTypes
+var ActivityTypes = map[string]ActivityType{
+	"SIGNUP":       ActivitySignup,
+	"LOGIN":        ActivityLogin,
+	"PAYMENT":      ActivityPayment,
+	"CONFIRMATION": ActivityConfirmation,
+}
 
 // KVPType describes the content of the KVP data.
 type KVPType string

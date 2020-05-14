@@ -15,12 +15,15 @@ const (
 )
 
 var (
-	sampleRequest1 = `[{"checkType":"DEVICE","activityType":"","checkSessionKey":"",
+	sampleRequest1 = `[{"checkType":"DEVICE","activityType":"LOGIN","checkSessionKey":"",
 		"activityData":[{"kvpKey":"","kvpValue":"","kvpType":""}]}]`
 	sampleRequest2 = `[{"checkType":"TOOL","activityType":"","checkSessionKey":"",
 		"activityData":[{"kvpKey":"","kvpValue":"","kvpType":""}]}]`
+	sampleRequest3 = `[{"checkType":"COMBO","activityType":"LOGGING","checkSessionKey":"",
+		"activityData":[{"kvpKey":"","kvpValue":"","kvpType":""}]}]`
 
-	invalidCheckTypeResponse = `{"code":500,"message":"invalid checkType"}`
+	invalidCheckTypeResponse    = `{"code":500,"message":"invalid checkType"}`
+	invalidActivityTypeResponse = `{"code":500,"message":"invalid activityType"}`
 )
 
 func TestDeviceCheck(t *testing.T) {
@@ -32,7 +35,7 @@ func TestDeviceCheck(t *testing.T) {
 		response   string
 	}{
 		{
-			name:       "Valid checkType",
+			name:       "Valid request",
 			payload:    sampleRequest1,
 			statusCode: 200,
 			response:   successResponse,
@@ -48,6 +51,12 @@ func TestDeviceCheck(t *testing.T) {
 			payload:    sampleRequest2,
 			statusCode: 500,
 			response:   invalidCheckTypeResponse,
+		},
+		{
+			name:       "Invalid activityType",
+			payload:    sampleRequest3,
+			statusCode: 500,
+			response:   invalidActivityTypeResponse,
 		},
 	}
 

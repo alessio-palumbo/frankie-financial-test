@@ -5,7 +5,7 @@ package models
 // but represent a number of different interaction types.
 type DeviceCheckDetails struct {
 	CheckType       string         `json:"checkType"`
-	ActivityType    ActivityType   `json:"activityType"`
+	ActivityType    string         `json:"activityType"`
 	CheckSessionKey string         `json:"checkSessionKey"`
 	ActivityData    []KeyValuePair `json:"activityData"`
 }

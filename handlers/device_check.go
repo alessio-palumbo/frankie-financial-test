@@ -45,5 +45,9 @@ func validatePayload(payload models.DeviceCheckDetails) error {
 		return errors.New("invalid checkType")
 	}
 
+	if !isValidActivityType(payload.ActivityType) {
+		return errors.New("invalid activityType")
+	}
+
 	return nil
 }
