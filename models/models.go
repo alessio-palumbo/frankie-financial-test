@@ -4,7 +4,7 @@ package models
 // checking service as part of an activity/transaction. A transaction isn't just a payment,
 // but represent a number of different interaction types.
 type DeviceCheckDetails struct {
-	CheckType       CheckType      `json:"checkType"`
+	CheckType       string         `json:"checkType"`
 	ActivityType    ActivityType   `json:"activityType"`
 	CheckSessionKey string         `json:"checkSessionKey"`
 	ActivityData    []KeyValuePair `json:"activityData"`

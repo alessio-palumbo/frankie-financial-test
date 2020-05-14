@@ -1,18 +1,25 @@
 package models
 
 // CheckType describes the type of check service we need to verify with.
-type CheckType string
+type checkType int
 
 const (
 	// CheckDevice describes a service checking device characteristics.
-	CheckDevice CheckType = "DEVICE"
+	CheckDevice checkType = iota
 
 	// CheckBiometric describes a service checking biometric characteristics.
-	CheckBiometric CheckType = "BIOMETRIC"
+	CheckBiometric
 
 	// CheckCombo describes a service that combines both device and biometric information.
-	CheckCombo CheckType = "COMBO"
+	CheckCombo
 )
+
+// CheckTypes lists the valid checkTypes
+var CheckTypes = map[string]checkType{
+	"DEVICE":    CheckDevice,
+	"BIOMETRIC": CheckBiometric,
+	"COMBO":     CheckCombo,
+}
 
 // ActivityType is the type of activity we are checking.
 // Vendor specific ActivityType can also be supplied when prepended with an underscore(_).

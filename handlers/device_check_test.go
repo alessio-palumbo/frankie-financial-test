@@ -15,8 +15,12 @@ const (
 )
 
 var (
-	sampleRequest = `[{"checkType":"dasfs","activityType":"","checkSessionKey":"",
+	sampleRequest1 = `[{"checkType":"DEVICE","activityType":"","checkSessionKey":"",
 		"activityData":[{"kvpKey":"","kvpValue":"","kvpType":""}]}]`
+	sampleRequest2 = `[{"checkType":"TOOL","activityType":"","checkSessionKey":"",
+		"activityData":[{"kvpKey":"","kvpValue":"","kvpType":""}]}]`
+
+	invalidCheckTypeResponse = `{"code":500,"message":"invalid checkType"}`
 )
 
 func TestDeviceCheck(t *testing.T) {
@@ -28,8 +32,8 @@ func TestDeviceCheck(t *testing.T) {
 		response   string
 	}{
 		{
-			name:       "Success",
-			payload:    sampleRequest,
+			name:       "Valid checkType",
+			payload:    sampleRequest1,
 			statusCode: 200,
 			response:   successResponse,
 		},
@@ -38,6 +42,12 @@ func TestDeviceCheck(t *testing.T) {
 			payload:    "",
 			statusCode: 400,
 			response:   badRequestResponse,
+		},
+		{
+			name:       "Invalid checkType",
+			payload:    sampleRequest2,
+			statusCode: 500,
+			response:   invalidCheckTypeResponse,
 		},
 	}
 
