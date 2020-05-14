@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 
@@ -24,10 +23,7 @@ func (h *Handler) DeviceCheck(c *gin.Context) {
 	var errorsList []string
 	activityDataKeys := make(map[string]bool)
 	for _, p := range body {
-		err = h.validatePayload(p, activityDataKeys)
-		if err != nil {
-			errorsList = append(errorsList, err.Error())
-		}
+		h.validatePayload(p, activityDataKeys, &errorsList)
 	}
 
 	if len(errorsList) > 0 {
@@ -40,23 +36,21 @@ func (h *Handler) DeviceCheck(c *gin.Context) {
 	})
 }
 
-func (h *Handler) validatePayload(payload models.DeviceCheckDetails, activityDataKeys map[string]bool) error {
+func (h *Handler) validatePayload(payload models.DeviceCheckDetails, activityDataKeys map[string]bool, errorsList *[]string) {
 
 	if !isValidCheckType(payload.CheckType) {
-		return errors.New("invalid checkType")
+		*errorsList = append(*errorsList, "invalid checkType: "+payload.CheckType)
 	}
 
 	if !isValidActivityType(payload.ActivityType) {
-		return errors.New("invalid activityType")
+		*errorsList = append(*errorsList, "invalid activityType: "+payload.ActivityType)
 	}
 
 	if !isValidCheckSessionKey(payload.CheckSessionKey, h.SessionCache) {
-		return errors.New("invalid checkSessionKey")
+		*errorsList = append(*errorsList, "invalid checkSessionKey: "+payload.CheckSessionKey)
 	}
 
 	if err := isValidActivityData(payload.ActivityData, activityDataKeys); err != nil {
-		return err
+		*errorsList = append(*errorsList, err.Error())
 	}
-
-	return nil
 }

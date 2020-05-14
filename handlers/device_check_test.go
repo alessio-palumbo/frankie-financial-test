@@ -9,35 +9,6 @@ import (
 	"gopkg.in/go-playground/assert.v1"
 )
 
-const (
-	successResponse       = `{"puppy":true}`
-	badRequestResponse    = `{"code":400,"message":"payload is empty or malformed"}`
-	cachedCheckSessionKey = "11111"
-)
-
-var (
-	sampleRequest1 = `[{"checkType":"DEVICE","activityType":"LOGIN","checkSessionKey":"10001",
-		"activityData":[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`
-	sampleRequest2 = `[{"checkType":"TOOL","activityType":"LOGIN","checkSessionKey":"10002",
-		"activityData":[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`
-	sampleRequest3 = `[{"checkType":"COMBO","activityType":"LOGGING","checkSessionKey":"10003",
-		"activityData":[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`
-	sampleRequest4 = `[{"checkType":"COMBO","activityType":"LOGIN","checkSessionKey":"10001",
-		"activityData":[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`
-	sampleRequest5 = `[{"checkType":"BIOMETRIC","activityType":"PAYMENT","checkSessionKey":"10004",
-		"activityData":[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]},
-		{"checkType":"DEVICE","activityType":"CONFIRMATION","checkSessionKey":"10005",
-		"activityData":[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`
-	sampleRequest6 = `[{"checkType":"COMBO","activityType":"SIGNUP","checkSessionKey":"10006",
-		"activityData":[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.integer"}]}]`
-
-	invalidCheckTypeResponse       = `{"code":500,"message":"invalid checkType"}`
-	invalidActivityTypeResponse    = `{"code":500,"message":"invalid activityType"}`
-	invalidKvpTypeResponse         = `{"code":500,"message":"invalid kvpType for ip.address"}`
-	invalidKvpKeyResponse          = `{"code":500,"message":"duplicate kvpKey: ip.address"}`
-	invalidCheckSessionKeyResponse = `{"code":500,"message":"invalid checkSessionKey"}`
-)
-
 func TestDeviceCheck(t *testing.T) {
 
 	tests := []struct {
@@ -47,46 +18,72 @@ func TestDeviceCheck(t *testing.T) {
 		response   string
 	}{
 		{
-			name:       "Valid request",
-			payload:    sampleRequest1,
+			name: "Valid request",
+			payload: `[{"checkType":"DEVICE","activityType":"LOGIN","checkSessionKey":"10001","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`,
 			statusCode: 200,
-			response:   successResponse,
+			response:   `{"puppy":true}`,
 		},
 		{
 			name:       "Empty request",
 			payload:    "",
 			statusCode: 400,
-			response:   badRequestResponse,
+			response:   `{"code":400,"message":"payload is empty or malformed"}`,
 		},
 		{
-			name:       "Invalid checkType",
-			payload:    sampleRequest2,
+			name: "Invalid checkType",
+			payload: `[{"checkType":"TOOL","activityType":"LOGIN","checkSessionKey":"10002","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`,
 			statusCode: 500,
-			response:   invalidCheckTypeResponse,
+			response:   `{"code":500,"message":"invalid checkType: TOOL"}`,
 		},
 		{
-			name:       "Invalid activityType",
-			payload:    sampleRequest3,
+			name: "Invalid activityType",
+			payload: `[{"checkType":"COMBO","activityType":"LOGGING","checkSessionKey":"10003","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`,
 			statusCode: 500,
-			response:   invalidActivityTypeResponse,
+			response:   `{"code":500,"message":"invalid activityType: LOGGING"}`,
 		},
 		{
-			name:       "Invalid checkSessionKey",
-			payload:    sampleRequest4,
+			name: "Invalid checkSessionKey",
+			payload: `[{"checkType":"COMBO","activityType":"LOGIN","checkSessionKey":"10001","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`,
 			statusCode: 500,
-			response:   invalidCheckSessionKeyResponse,
+			response:   `{"code":500,"message":"invalid checkSessionKey: 10001"}`,
 		},
 		{
-			name:       "Invalid KvpKey",
-			payload:    sampleRequest5,
+			name: "Invalid KvpKey",
+			payload: `[{"checkType":"BIOMETRIC","activityType":"PAYMENT","checkSessionKey":"10004","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]},
+				{"checkType":"DEVICE","activityType":"CONFIRMATION","checkSessionKey":"10005","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]}]`,
 			statusCode: 500,
-			response:   invalidKvpKeyResponse,
+			response:   `{"code":500,"message":"duplicate kvpKey: ip.address"}`,
 		},
 		{
-			name:       "Invalid activityData kpvType",
-			payload:    sampleRequest6,
+			name: "Invalid activityData kpvType",
+			payload: `[{"checkType":"COMBO","activityType":"SIGNUP","checkSessionKey":"10006","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.integer"}]}]`,
 			statusCode: 500,
-			response:   invalidKvpTypeResponse,
+			response:   `{"code":500,"message":"invalid kvpType 'general.integer' for 'ip.address'"}`,
+		},
+		{
+			name: "Multiple invalid fields",
+			payload: `[{"checkType":"BILLING","activityType":"PRICING","checkSessionKey":"10001","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.integer"}]}]`,
+			statusCode: 500,
+			response: `{"code":500,"message":"invalid checkType: BILLING, invalid activityType: PRICING, ` +
+				`invalid checkSessionKey: 10001, invalid kvpType 'general.integer' for 'ip.address'"}`,
+		},
+		{
+			name: "Multiple objects invalid fields",
+			payload: `[{"checkType":"COMBO","activityType":"LOGIN","checkSessionKey":"10007","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"1.23.45.123","kvpType":"general.string"}]},
+				{"checkType":"SCAN","activityType":"CHECK","checkSessionKey":"10007","activityData":
+				[{"kvpKey":"ip.address","kvpValue":"21.23.34.122","kvpType":"general.integer"}]}]`,
+			statusCode: 500,
+			response: `{"code":500,"message":"invalid checkType: SCAN, invalid activityType: CHECK, invalid ` +
+				`checkSessionKey: 10007, duplicate kvpKey: ip.address, invalid kvpType 'general.integer' for 'ip.address'"}`,
 		},
 	}
 

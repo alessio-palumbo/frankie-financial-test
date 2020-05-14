@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -43,12 +44,6 @@ func isValidCheckSessionKey(sk string, cache *cache.SessionCache) bool {
 	return true
 }
 
-var (
-	errActivityDataDuplicateKey = "duplicate kvpKey: "
-	errActivityDataInvalidType  = "invalid kvpType for "
-	errActivityDataUnknownType  = "unknown kvpType for "
-)
-
 // isValidActivityData validates the following:
 // * that a kpvKey hasn't already been used in current call
 // * that the given kvpType matches the type of data described by kvpValue
@@ -58,7 +53,7 @@ func isValidActivityData(kvPairs []models.KeyValuePair, usedKeys map[string]bool
 
 	for _, p := range kvPairs {
 		if _, found := usedKeys[p.KvpKey]; found {
-			errorsList = append(errorsList, errActivityDataDuplicateKey+p.KvpKey)
+			errorsList = append(errorsList, "duplicate kvpKey: "+p.KvpKey)
 		}
 		usedKeys[p.KvpKey] = true
 
@@ -73,10 +68,10 @@ func isValidActivityData(kvPairs []models.KeyValuePair, usedKeys map[string]bool
 		case enums.KVPGeneralFloat:
 			_, err = strconv.ParseFloat(p.KvpValue, 64)
 		default:
-			errorsList = append(errorsList, errActivityDataUnknownType+p.KvpKey)
+			errorsList = append(errorsList, fmt.Sprintf("unknown kvpType '%s' for '%s'", p.KvpType, p.KvpKey))
 		}
 		if err != nil {
-			errorsList = append(errorsList, errActivityDataInvalidType+p.KvpKey)
+			errorsList = append(errorsList, fmt.Sprintf("invalid kvpType '%s' for '%s'", p.KvpType, p.KvpKey))
 		}
 
 	}
