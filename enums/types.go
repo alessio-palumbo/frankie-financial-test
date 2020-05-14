@@ -1,4 +1,4 @@
-package models
+package enums
 
 // CheckType describes the type of check service we need to verify with.
 type checkType int

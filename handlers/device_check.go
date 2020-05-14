@@ -22,8 +22,9 @@ func (h *Handler) DeviceCheck(c *gin.Context) {
 	}
 
 	var errorsList []string
+	activityDataKeys := make(map[string]bool)
 	for _, p := range body {
-		err := h.validatePayload(p)
+		err = h.validatePayload(p, activityDataKeys)
 		if err != nil {
 			errorsList = append(errorsList, err.Error())
 		}
@@ -39,7 +40,7 @@ func (h *Handler) DeviceCheck(c *gin.Context) {
 	})
 }
 
-func (h *Handler) validatePayload(payload models.DeviceCheckDetails) error {
+func (h *Handler) validatePayload(payload models.DeviceCheckDetails, activityDataKeys map[string]bool) error {
 
 	if !isValidCheckType(payload.CheckType) {
 		return errors.New("invalid checkType")
@@ -51,6 +52,10 @@ func (h *Handler) validatePayload(payload models.DeviceCheckDetails) error {
 
 	if !isValidCheckSessionKey(payload.CheckSessionKey, h.SessionCache) {
 		return errors.New("invalid checkSessionKey")
+	}
+
+	if err := isValidActivityData(payload.ActivityData, activityDataKeys); err != nil {
+		return err
 	}
 
 	return nil

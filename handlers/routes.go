@@ -10,11 +10,11 @@ type Handler struct {
 	SessionCache *cache.SessionCache
 }
 
-// SetupRouter registers the listed endpoints and the return a router.
+// SetupRouter registers the listed endpoints and the returns a router.
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	// Initialise cache for sessionKeys to pass to the handler
+	// Initialise the handler's cache to use to validate checkSessionKeys in this session.
 	handler := Handler{cache.New()}
 
 	r.POST("/isgood", handler.DeviceCheck)
