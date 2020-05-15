@@ -45,3 +45,17 @@ docker-clean:
 		xargs docker stop || true; \
 		docker image rm $(IMAGE) || true; \
     go clean
+
+# Swagger commands:
+# * Use swagger-setup to install package the first time.
+# * Use swagger to refresh the file upon changes to the annotations.
+# * Navigate to http://localhost:8080/swagger/index.html
+
+.PHONY: swagger-setup
+swagger-setup:
+	go get -u github.com/swaggo/swag/cmd/swag && \
+		swag init \
+
+.PHONY: swagger
+swagger:
+	swag init

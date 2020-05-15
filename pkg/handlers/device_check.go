@@ -4,13 +4,29 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gin-gonic/gin"
+
 	e "github.com/alessio-palumbo/frankie-financial-test/pkg/errors"
 	"github.com/alessio-palumbo/frankie-financial-test/pkg/models"
-	"github.com/gin-gonic/gin"
 )
+
+type Success struct {
+	// Everyone gets a puppy if the SDK output is good.
+	Puppy bool `json:"puppy" example:"true"`
+}
 
 // DeviceCheck validates the payload and returns a puppy if the request is correct.
 // For invalid payloads it returns an error with a description of the issue found
+//
+// @Summary Simple check to see if the service is running smoothly.
+// @Description Validate the payload and returns a puppy if successful.
+// @Description Otherwise it returns a status 500 error with a list of the violations.
+// @Accept json
+// @Produce json
+// @Param deviceCheckDetails body []models.DeviceCheckDetails true "An array of objects that contain the details from each different provider wrapped up in the Universal SDK."
+// @Success 200 {object} handlers.Success "The data is fine. No issues, and everyone gets a puppy."
+// @Failure 500 {object} errors.CustomError "The system is presently unavailable, or running in a severely degraded state. Check the error message for details"
+// @Router /isgood [post]
 func (h *Handler) DeviceCheck(c *gin.Context) {
 	var body []models.DeviceCheckDetails
 
