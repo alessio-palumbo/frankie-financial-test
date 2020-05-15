@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/alessio-palumbo/frankie-financial-test/handlers"
+	"github.com/alessio-palumbo/frankie-financial-test/pkg/handlers"
 )
 
 func main() {

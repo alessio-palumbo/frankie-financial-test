@@ -3,8 +3,8 @@ package handlers
 import (
 	"testing"
 
-	"github.com/alessio-palumbo/frankie-financial-test/cache"
-	"github.com/alessio-palumbo/frankie-financial-test/models"
+	"github.com/alessio-palumbo/frankie-financial-test/pkg/cache"
+	"github.com/alessio-palumbo/frankie-financial-test/pkg/models"
 )
 
 func Test_isValidCheckType(t *testing.T) {

@@ -1,6 +1,6 @@
 package models
 
-import "github.com/alessio-palumbo/frankie-financial-test/enums"
+import "github.com/alessio-palumbo/frankie-financial-test/pkg/enums"
 
 // DeviceCheckDetails contains any/all details we want to pass on to the device/biometric
 // checking service as part of an activity/transaction. A transaction isn't just a payment,

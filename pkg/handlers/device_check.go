@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	e "github.com/alessio-palumbo/frankie-financial-test/errors"
-	"github.com/alessio-palumbo/frankie-financial-test/models"
+	e "github.com/alessio-palumbo/frankie-financial-test/pkg/errors"
+	"github.com/alessio-palumbo/frankie-financial-test/pkg/models"
 	"github.com/gin-gonic/gin"
 )
 

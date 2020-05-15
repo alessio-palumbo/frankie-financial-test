@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/alessio-palumbo/frankie-financial-test/cache"
-	"github.com/alessio-palumbo/frankie-financial-test/enums"
-	"github.com/alessio-palumbo/frankie-financial-test/models"
+	"github.com/alessio-palumbo/frankie-financial-test/pkg/cache"
+	"github.com/alessio-palumbo/frankie-financial-test/pkg/enums"
+	"github.com/alessio-palumbo/frankie-financial-test/pkg/models"
 )
 
 // isValidCheckType matches the given checkType against the list of accepted checkTypes.

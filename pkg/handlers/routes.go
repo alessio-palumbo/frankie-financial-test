@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/alessio-palumbo/frankie-financial-test/cache"
+	"github.com/alessio-palumbo/frankie-financial-test/pkg/cache"
 	"github.com/gin-gonic/gin"
 )
 
