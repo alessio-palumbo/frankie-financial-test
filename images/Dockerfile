@@ -8,16 +8,15 @@ RUN apk update && \
 
 COPY go.mod .
 COPY go.sum .
-COPY main.go .
-COPY pkg .
 
 RUN go mod download
 RUN go mod verify
 
-COPY . .
+COPY main.go .
+COPY pkg ./pkg
+COPY docs ./docs
 
-RUN go build -o main .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o main *.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o main
 
 FROM scratch
 

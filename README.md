@@ -54,3 +54,21 @@ Install Go following the official instructions: https://golang.org/doc/install
 * To clean up run:
   * docker ps -aq -f name=frankie | xargs docker stop || true; docker image rm
   * go clean
+
+## Swagger docs
+
+### With Makefile
+
+* Run `make swagger-setup` to install swaggo and re-generate docs
+* Run `make swagger` to re-generate docs after a change
+
+### Without Makefile
+
+* Run `go get -u github.com/swaggo/swag/cmd/swag` to install swaggo
+* Run `swag init` to generate swagger docs
+
+### To check docs
+
+* Terminal: `curl localhost:8080/swagger/doc.json`
+* Browser: `http://localhost:8080/swagger/index.html`
+* Files: `docs/swagger.json`, `docs/swagger.yaml`
